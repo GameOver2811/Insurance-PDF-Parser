@@ -6,8 +6,8 @@ import com.pdf.parser.customer.dto.CustomerRequest;
 import com.pdf.parser.customer.dto.CustomerResponse;
 import com.pdf.parser.customer.entity.Customer;
 import com.pdf.parser.customer.repository.CustomerRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +18,7 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
     private final CustomerTranslator customerTranslator;
+    private final PasswordEncoder passwordEncoder;
 
     public List<CustomerResponse> getCustomers() {
         return customerTranslator.toCustomerResponse(customerRepository.findAll());
@@ -33,6 +34,10 @@ public class CustomerService {
 
     public CustomerResponse saveCustomer(CustomerRequest request) {
         Customer customer = customerTranslator.toCustomer(request);
+        // Explicitly set active status true
+        customer.setActive(true);
+        // Encrypt the password before saving
+        customer.setPassword(passwordEncoder.encode(customer.getPassword()));
         return customerTranslator.toCustomerResponse(customerRepository.save(customer));
     }
 }
