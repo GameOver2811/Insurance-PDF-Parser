@@ -1,6 +1,5 @@
 package com.pdf.parser.customer.controller;
 
-import com.pdf.parser.customer.entity.Customer;
 import com.pdf.parser.customer.service.CustomerService;
 
 import com.pdf.parser.common.response.ApiResponse;
@@ -8,8 +7,11 @@ import com.pdf.parser.customer.dto.CustomerRequest;
 import com.pdf.parser.customer.dto.CustomerResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("customers/")
@@ -19,26 +21,31 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping
-    public ApiResponse<?>  createCustomer(@Valid @RequestBody CustomerRequest request) {
-        return new ApiResponse<CustomerRequest>(true, "Customer created successfully!", request);
+    public ResponseEntity<ApiResponse<?>> createCustomer(@Valid @RequestBody CustomerRequest request) {
+        CustomerResponse customer = customerService.saveCustomer(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponse<>(
+                        true,
+                        "Customer created successfully!",
+                        customer
+                ));
+    }
+
+    @GetMapping()
+    public ApiResponse<?> getCustomers() {
+        List<CustomerResponse> customers = customerService.getCustomers();
+        return new ApiResponse<List<CustomerResponse>>(true, "Customers fetched successfully!", customers);
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<?> getCustomer(@PathVariable Long id) {
+    public ApiResponse<?> getCustomers(@PathVariable Long id) {
 
-        Customer customer = customerService.getCustomer(id);
+        CustomerResponse customer = customerService.getCustomer(id);
 
-        CustomerResponse response = CustomerResponse.builder()
-                .id(customer.getId())
-                .companyName(customer.getCompanyName())
-                .email(customer.getEmail())
-                .active(customer.getActive())
-                .build();
-
-        return new ApiResponse<>(
+        return new ApiResponse<CustomerResponse>(
                 true,
                 "Customer fetched successfully!",
-                response
+                customer
         );
     }
 }
