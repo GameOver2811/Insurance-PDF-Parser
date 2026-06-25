@@ -3,6 +3,10 @@ package com.pdf.parser.common.translator;
 import com.pdf.parser.customer.dto.CustomerRequest;
 import com.pdf.parser.customer.dto.CustomerResponse;
 import com.pdf.parser.customer.entity.Customer;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
 

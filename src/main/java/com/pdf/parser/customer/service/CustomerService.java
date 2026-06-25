@@ -1,5 +1,6 @@
 package com.pdf.parser.customer.service;
 
+import com.pdf.parser.common.exception.AlreadyExistsException;
 import com.pdf.parser.common.exception.CustomerNotFoundException;
 import com.pdf.parser.common.translator.CustomerTranslator;
 import com.pdf.parser.customer.dto.CustomerRequest;
@@ -33,7 +34,14 @@ public class CustomerService {
     }
 
     public CustomerResponse saveCustomer(CustomerRequest request) {
+
         Customer customer = customerTranslator.toCustomer(request);
+
+        // Check if customer exists with same email ID
+        if(customerRepository.existsByEmail(customer.getEmail())) {
+            throw new AlreadyExistsException("Customer already exists with this email ID.");
+        }
+
         // Explicitly set active status true
         customer.setActive(true);
         // Encrypt the password before saving

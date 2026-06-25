@@ -40,6 +40,19 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    // Already Exist Exception
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<ApiResponse> handleAlreadyExistsException(
+            AlreadyExistsException ex) {
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiResponse(
+                        false,
+                        ex.getMessage(),
+                        null
+                ));
+    }
+
     // Un-identified Exceptions
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> handleException(
