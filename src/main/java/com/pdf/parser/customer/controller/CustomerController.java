@@ -14,22 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("customers/")
+@RequestMapping("api/customers/")
 @RequiredArgsConstructor
 public class CustomerController {
 
     private final CustomerService customerService;
-
-    @PostMapping
-    public ResponseEntity<ApiResponse<?>> createCustomer(@Valid @RequestBody CustomerRequest request) {
-        CustomerResponse customer = customerService.saveCustomer(request);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse<>(
-                        true,
-                        "Customer created successfully!",
-                        customer
-                ));
-    }
 
     @GetMapping()
     public ApiResponse<?> getCustomers() {

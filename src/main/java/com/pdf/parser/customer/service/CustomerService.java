@@ -19,7 +19,6 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
     private final CustomerTranslator customerTranslator;
-    private final PasswordEncoder passwordEncoder;
 
     public List<CustomerResponse> getCustomers() {
         return customerTranslator.toCustomerResponse(customerRepository.findAll());
@@ -33,19 +32,4 @@ public class CustomerService {
         return customerTranslator.toCustomerResponse(customer);
     }
 
-    public CustomerResponse saveCustomer(CustomerRequest request) {
-
-        Customer customer = customerTranslator.toCustomer(request);
-
-        // Check if customer exists with same email ID
-        if(customerRepository.existsByEmail(customer.getEmail())) {
-            throw new AlreadyExistsException("Customer already exists with this email ID.");
-        }
-
-        // Explicitly set active status true
-        customer.setActive(true);
-        // Encrypt the password before saving
-        customer.setPassword(passwordEncoder.encode(customer.getPassword()));
-        return customerTranslator.toCustomerResponse(customerRepository.save(customer));
-    }
 }
